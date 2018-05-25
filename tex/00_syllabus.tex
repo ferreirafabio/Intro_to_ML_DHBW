@@ -1,0 +1,127 @@
+%\documentclass[a4paper]{article}
+\documentclass[a4paper]{article}
+%% Language and font encodings
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+
+%% Sets page size and margins
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+%% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage[normalem]{ulem} % for sout command
+
+\title{Syllabus WWI15B4}
+\author{Fabio Ferreira, David Bethge}
+
+\begin{document}
+\maketitle
+
+
+\section{introduction \textcolor{red}{May 8}}
+%Felix
+\begin{itemize}
+\item about us, administrative etc.
+\item history, motivation
+\item applications, CRISP-DM
+\item what is learning? why machine learning?
+\item technical notation (vector, matrix algebra)
+\item types of learning (supervised vs. unsupervised)
+\item classification, regression, clustering
+\end{itemize}
+
+\section{statistical learning \textcolor{red}{May 16, May 29}}
+%David
+\subsection{multiple linear regression}
+\begin{itemize}
+\item model assumptions, estimation and prediction
+\item error term composition, model flexibility
+\item iris flower dataset
+\item advantages of statistical parametric methods
+
+
+\end{itemize}
+\subsection{algorithms}
+\begin{itemize}
+\item ridge regression, lasso 
+\item logit regression
+\item nearest neighbor
+\end{itemize}
+
+\subsection{model evaluation}
+\begin{itemize}
+\item empirical vs. true error
+\item bias variance tradeoff
+\item overfitting vs. underfitting
+\item cross-validation, bootstrapping
+\item evaluation metrics: ROC, confusion matrix
+\end{itemize}
+
+\section{concept learning theory and understanding of the hypothesis space \textcolor{red}{May 24}} %Fabio
+\begin{itemize}
+\item inductive learning hypothesis
+\item hypothesis space 
+\item most simple learning concept: hypothesis space search (general-to-specific, specific-to-general-search, version space / candidate elimination algorithm)
+\item VC dimension and its implications
+\item structural risk minimization (SRM)
+\end{itemize}
+
+
+\section{classification \textcolor{red}{June 6, June 12}}
+% David und Fabio
+\subsection{decision tree}
+% David
+\begin{itemize}
+\item concept of information, entropy
+\item induction algorithms (CART, C4.5)
+\item extensions: bagging, boosting, random forests
+\end{itemize}
+\subsection{neural networks}
+% Fabio
+\begin{itemize}
+\item logistic regression
+\item relation between logistic regression and NN
+\item activation functions, regularization etc.
+\item backpropagation
+\item convolutional neural networks
+\item some advices for practical applications
+\item NNs in the field
+\end{itemize}
+\subsection{svm}
+%Fabio
+\begin{itemize}
+\item maximum margin classifier
+\item soft vs. hard margin
+\item kernel trick
+\item evaluation and relation to SRM
+\end{itemize}
+
+
+
+\section{clustering \textcolor{red}{June 20}}
+%Felix
+\begin{itemize}
+\item PCA / dimensionality reduction
+\item applications
+\item agglomerative, hierarchical, partitioning
+\item distance metrics
+\item k-means, k-medoids, fuzzy k-means
+\item expectation maximization
+\item application: outlier detection
+\end{itemize}
+
+\section{outlook \textcolor{red}{July 3}}
+%David und Fabio
+\begin{itemize}
+\item advantages: human forecasting
+\item human brain vs. AI
+\item future of machine learning: transfer learning, reinforcement learning, technological singularity
+\item critical perspective on machine learning
+\item time for questions and discussions
+\end{itemize}
+
+\end{document}

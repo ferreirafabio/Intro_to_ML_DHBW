@@ -21,17 +21,25 @@
 \usetheme{Antibes}
 \usepackage{centernot}
 \title[]{Introductory Course: Machine Learning (WWI15B4)}
-\subtitle{Concept Learning}
+\subtitle{Concept Learning and the Hypothesis Space}
 \author{Fabio Ferreira, David Bethge}
-\institute{Karlsruhe Institute of Technology}
+\institute{DHBW Karlsruhe}
 \date{}
-\graphicspath{{figures/02/}}
+\graphicspath{{figures/concept_learning/}}
 
 
 \expandafter\def\expandafter\insertshorttitle\expandafter{%
    \insertshorttitle\hfill%
    \insertframenumber\,/\,\inserttotalframenumber}
    
+   
+\AtBeginSubsection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}   
 
 \begin{document}
 %%%---CUSTOM---
@@ -43,6 +51,26 @@
 \end{frame}
 
 \section{Motivation}
+\begin{frame}{Recommended Literature}
+\begin{center}
+\includegraphics[width=0.4\textwidth]{mitchell_ml}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\tableofcontents
+\end{frame}
+
+\begin{frame}{Questions and more questions...}
+Some questions we will be answering (from a theoretical perspective) in this lecture:
+\begin{itemize}
+\item What does "a model generalizes well" mean?
+\item Why classification cannot work without making a-priori assumptions?
+\item What is a bias and what different types do we usually consider?
+\item Why can we only learn so much what's in the data we provide to a learning algorithm?
+\item Why are models with lots of parameters usually not a blessing but a curse? (curse of dimensionality)
+\end{itemize}
+\end{frame}
 
 \begin{frame}{Motivation}
 Statements like 
@@ -84,7 +112,7 @@ Description of a subset of objects/events which are defined over a larger set.
 \begin{frame}
 \textbf{Why are concepts important?}
 \begin{itemize}
-\item Learning often involves inducing inducing general functions from specific (training) examples %(inductive learning)
+\item Learning often involves inducing general functions from specific (training) examples %(inductive learning)
 \item building block for: 
 	\begin{itemize}
 		\item classification, events
@@ -121,7 +149,6 @@ $foo(cougar) \rightarrow false $\newline
 $foo(snow leopard) \rightarrow false $\newline
 \end{frame}
 
-\subsection{Concept Learning Task}
 \begin{frame}{Concept Learning}
 Example:\newline
 $foo(lion) \rightarrow true $\newline
@@ -133,6 +160,7 @@ $foo(snow leopard) \rightarrow false $\newline
 Concept: \textbf{animals inhabiting Africa}
 \end{frame}
 
+\subsection{Concept Learning Task}
 \begin{frame}{Concept Learning Task}
 (The following examples are taken from \cite{mitchell1997a})
 \begin{itemize}
@@ -161,9 +189,9 @@ Concept: \textbf{animals inhabiting Africa}
 \item e.g. <Sunny, Warm, Normal, Strong, ?, Same>
 \item most \textbf{general} hypothesis: $<?,?,?,?,?,?>$
 \item most \textbf{specific} hypothesis: $<\emptyset,\emptyset,\emptyset,\emptyset,\emptyset,\emptyset>$
-\item "x satisfies h" if $h(x) = 1$, $\exists x \in X$
+\item \uncover<2->{"x satisfies h" if $h(x) = 1$, $\exists x \in X$
 \item a hypothesis is \textbf{consistent} if it correctly classifies all samples 
-\item \textbf{goal}: determine $h \in H \text{ s.t. } h(x) = c(x), \forall x \in X$
+\item \textbf{goal}: determine $h \in H \text{ s.t. } h(x) = c(x), \forall x \in X$}
 \end{itemize}
 \end{frame}
 
@@ -198,9 +226,10 @@ Let $h_j$ and $h_k$ be defined over X. Then $h_j \geq h_k$ iff: %i.e. <->
 \centering $h_k(x) = 1 \Rightarrow h_j(x) = 1, \forall x \in X$
 \end{block}
 
-\begin{block}{More general to: ($>$)}
+\uncover<2->{
+\begin{block}{More general than: ($>$)}
 Let $h_j$ and $h_k$ be defined over X. Then $h_j > h_k$ iff:
-\centering $h_j \geq h_k \land h_k \ngeq h_j$ %note: independent of x
+\centering $h_j \geq h_k \land h_k \ngeq h_j$} %note: independent of x
 \end{block}
 \end{frame}
 
@@ -211,7 +240,7 @@ Let $h_j$ and $h_k$ be defined over X. Then $h_j > h_k$ iff:
 \item h3 = <Sunny, ?, ?, ?, Cool, ?>
 \end{itemize}
 
-Verify the following expressions:
+Evaluate the following expressions:
 \begin{itemize}
 \item $h2 > h1$? % true: h1 -> h2 AND it is not h2 -> h1 (for all x)
 \item $h3 > h2$? % false: h3 NOT -> h2
@@ -225,10 +254,10 @@ Verify the following expressions:
 \item h3 = <Sunny, ?, ?, ?, Cool, ?>
 \end{itemize}
 
-Verify the following expressions:
+Evaluate the following expressions:
 \begin{itemize}
 \item $h2 > h1$? \textbf{true}, since h1 $\Rightarrow$ h2 AND it is NOT h2 $\Rightarrow$ h1 ($\forall $x)
-\item $h3 > h2$? \textbf{false}, since h2 NOT $\Rightarrow$ h3 ($\exists$ x)
+\item $h3 > h2$? \textbf{false}, since NOT h2 $\Rightarrow$ h3 ($\exists$ x)
 \end{itemize}
 \end{frame}
 
@@ -243,7 +272,7 @@ Verify the following expressions:
 Verify the following expressions:
 \begin{itemize}
 \item $h2 > h1$? \textbf{true}, since h1 $\Rightarrow$ h2 AND it is NOT h2 $\Rightarrow$ h1 ($\forall $x)
-\item $h3 > h2$? \textbf{false}, since h2 NOT $\Rightarrow$ h3 ($\exists$ x)
+\item $h3 > h2$? \textbf{false}, since NOT h2 $\Rightarrow$ h3 ($\exists$ x)
 \item $h3 \geq h1$? 
 \end{itemize}
 \end{frame}
@@ -755,7 +784,29 @@ Pr\bigg(test error \leq training error + \sqrt[]{...\frac{VC(H)}{N}...}\bigg) = 
 \uncover<4->{\textbf{main takeaway}: if you use a complex algorithm you will require a lot of data to generalize well}
 \end{frame}
 
+\begin{frame}{Curse of Dimensionality}
+Problems that face the \textit{curse of dimensionality} in inductive learning typically refer to the phenomenon that, when increasing the model dimensionality\footnote{e.g. attributes of concepts <x1, x2...>, weights/learned parameters in parameterized models}, the available data becomes sparse\\
+$\Rightarrow$ the demand for additional data often grows exponentially with the dimensionality
+\end{frame}
 
+\begin{frame}{In Practice: Structural Risk Minimization}
+
+\begin{itemize}
+\item computing the VC dimension is often intractable or impossible
+\item e.g. when need to prove that it's impossible to find any set that can be shattered
+\end{itemize}
+
+\uncover<4->{\begin{block}{Structural Risk Minimization (SRM)}
+  \begin{enumerate}
+  \item choose a class of functions (e.g. polynomials of degree n)
+  \item divide the class of functions into subsets: $H_1 \subset H_2 \subset ... \subset H_n$ (e.g. polynomials of increasing degree)
+  \item perform parameter selection (optimize)
+  \item select the model with lowest (empirical) error (and implicitly lowest VC dim) 
+  \end{enumerate}
+\end{block}}
+\uncover<5->{for example SVM performs SRM}
+
+\end{frame}
 
 
 \newpage

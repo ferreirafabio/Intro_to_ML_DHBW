@@ -1,0 +1,440 @@
+\documentclass{beamer}
+%
+% Choose how your presentation looks.
+%
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+  \usetheme{default}      % or try Darmstadt, Madrid, Warsaw, ...
+  \usecolortheme{default} % or try albatross, beaver, crane, ...
+  \usefonttheme{default}  % or try serif, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+} 
+% CUSTOM
+\makeatletter
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+
+\makeatother
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usetheme{Antibes}
+\usepackage{centernot}
+\title[]{Introductory Course: Machine Learning (WWI15B4)}
+\subtitle{Support Vector Machines}
+\author{Fabio Ferreira, David Bethge}
+\institute{DHBW Karlsruhe}
+\date{}
+\graphicspath{{figures/05/}}
+
+\DeclareMathOperator*{\argmax}{argmax}
+\expandafter\def\expandafter\insertshorttitle\expandafter{%
+   \insertshorttitle\hfill%
+   \insertframenumber\,/\,\inserttotalframenumber}
+   
+   
+\AtBeginSubsection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
+
+
+\begin{document}
+%%%---CUSTOM---
+%\bibliographystyle{plain}
+%\bibliography{lecture/bibliography.bib}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\setbeamertemplate{caption}{\raggedright\insertcaption\par}
+
+
+\section{Support Vector Machines}
+\begin{frame}{Overview}
+\tableofcontents
+\end{frame}
+
+\subsection{Introduction}
+\begin{frame}{Recommended Literature}
+\begin{itemize}
+\item V.N. Vapnik: "Statistical Learning Theory", Wiley, 1998
+\item B. Schoelkopf: "Support Vector Learning"
+\item Patrick Winston, MIT 6.034 Artificial Intelligence, Fall 2010, \url{https://www.youtube.com/watch?v=_PwhiWxHK8o}
+\end{itemize}
+\end{frame}
+
+
+\subsection{Introduction}
+\begin{frame}{Introduction}
+How to separate this space?
+\begin{center}
+\includegraphics[width=0.5\textwidth]{svm1}
+\end{center}
+filled samples: positive, blank samples: negative
+\end{frame}
+
+\begin{frame}{Introduction}
+Approaches we know so far would do something like this:
+\begin{center}
+\includegraphics[width=0.8\textwidth]{svm2}
+\end{center}
+\end{frame}
+
+\begin{frame}{Introduction}
+There exist many hyperplanes that would correctly classify the data. Which one is the best?
+\begin{center}
+\includegraphics[width=0.6\textwidth]{svm3}
+\end{center}
+\end{frame}
+
+\begin{frame}{Introduction}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{svm4}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Introduction}
+Let's choose a hyperplane so that it represents the largest separation (margin) between both classes. \\Thiy yields the task: maximize the distance from the \textit{middle line} to the nearest data point on each side.
+\begin{center}
+\includegraphics[width=0.7\textwidth]{svm5}
+\end{center}
+\end{frame}
+
+\subsection{Linear Maximum Margin Classifier}
+\begin{frame}{Linear Maximum Margin Classifier: Decision Rule}
+Considering a vector pointing to an unknown sample $\vec{u}$ and a vector of arbitrary length constrained to be perpendicular to the middle line. \textbf{Task:} Determine if $\vec{u}$ is on the right or left side of the hyperplane
+ \vspace{2em}
+
+\begin{columns}
+    \begin{column}{0.5\textwidth}
+        \includegraphics[width=1\textwidth]{svm6}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        Idea: project $\vec{u}$ onto $\vec{w}$ with some constant $c \in {\rm I\!R}$:\\ $$\vec{w}\cdot\vec{u} \geq c$$ or
+        $$\vec{w}\cdot\vec{u}+b \geq 0, c = -b$$
+        Decision rule: if this inequality holds then $\vec{u}$ is a positive sample
+    \end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Linear Maximum Margin Classifier: Constraints}
+Remember the decision rule: $\vec{w}\cdot\vec{u}+b \geq 0 \Rightarrow$ positive sample \\
+
+\uncover<1->{Idea: if some unknown sample is a positive sample, we insist the decision rule yields $\geq 1$ (otherwise $\leq -1$.)} 
+
+\uncover<2->{Mathematically:
+\begin{itemize}
+\item for positive samples: $\vec{w}\cdot \vec{x}_{+} + b \geq 1$
+\item for negative samples: $\vec{w}\cdot \vec{x}_{-} + b \leq -1$}
+\end{itemize}
+\uncover<3->{For convenience we introduce a variable $y_i$ s.t.:\\
+\begin{itemize}
+\item $y_i$ = 1 for positive samples and $y_i = -1$ for negative samples
+\end{itemize}
+
+The comfort we gain: only one inequality that holds for $x_i$ laying outside of the margin boundaries $$\boxed{y_i (\vec{x}_i \cdot \vec{w} + b) \geq 1}$$}
+\uncover<4->{
+and we add one additional constraint for $x_i$ placed on the margins: $$\boxed{y_i (\vec{x}_i \cdot \vec{w} + b) -1 = 0}$$
+}
+\end{frame}
+
+
+\begin{frame}{Linear Maximum Margin Classifier: Constraints}
+Geometrically this gives us:
+\begin{center}
+\includegraphics[width=1\textwidth]{svm7}
+\end{center}
+\end{frame}
+
+\begin{frame}{Linear Maximum Margin Classifier: Margin Width}
+Recall: we want to maximize the distance between points of two different classes. This raises the question: how to express the distance between the two margins?
+\begin{center}
+\includegraphics[width=0.7\textwidth]{svm8}
+\end{center}
+\end{frame}
+
+\begin{frame}{Linear Maximum Margin Classifier: Margin Width}
+How to express the distance between the two margin boundaries?
+\textbf{One solution: compute the width with a unit (light blue) vector and project the purple vector on that unit vector}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{svm9}
+\end{center}
+$$width = (\vec{x}_{+} - \vec{x}_{-}) \cdot \frac{\vec{w}}{\lVert \vec{w} \rVert}$$
+\end{frame}
+
+\begin{frame}{Linear Maximum Margin Classifier: Margin Width}
+
+$$width = (\vec{x}_{+} - \vec{x}_{-}) \cdot \frac{\vec{w}}{\lVert \vec{w} \rVert}$$
+\uncover<1->{now use $y_i (\vec{x}_i \cdot \vec{w} + b) -1 = 0$ from before for to get:}
+
+\uncover<2->{$$width = \frac{(1-b + 1 +b)}{\lVert \vec{w} \rVert} = \frac{2}{\lVert \vec{w} \rVert}$$}
+
+\uncover<3->{our goal now is:
+$$\max \frac{1}{\lVert \vec{w} \rVert} = \min \lVert \vec{w} \rVert \leadsto \min \frac{1}{2} \lVert \vec{w} \rVert^2$$}
+\uncover<4->{find extremum of a function with constraints\\$
+\rightarrow$ use Lagrangian optimization (method of Lagrange multipliers)\\
+$\rightarrow$ yields a new (closed) expression with the constraints included}
+\end{frame}
+
+\begin{frame}{Linear Maximum Margin Classifier: Lagrangian Multipliers}
+\uncover<1->{
+Recall: we had defined a constraint for $x_i$ placed directly on the margin boundaries; $y_i (\vec{x}_i \cdot \vec{w} + b) -1 = 0 \rightarrow$ re-use it for the Lagrangian for  $m$ samples:
+
+\begin{equation}
+\label{eq:l1}
+L(\vec{w}, \vec{\alpha}, b) = \frac{1}{2} \lVert \vec{w} \rVert^2 - \sum_{i=1}^{m} \alpha_i [y_i(\vec{w} \cdot \vec{x_i} + b) -1]
+\end{equation}}
+
+\uncover<2->{
+compute the minimum/first partial derivatives of L w.r.t. $\vec{w}$ and b:
+\begin{equation}
+\label{eq:l2}
+\frac{\partial L}{\partial \vec{w}} = \vec{w} - \sum_{i=1}^{m} \alpha_i y_i \vec{x_i} = 0 \Rightarrow \boxed{\vec{w} = \sum_{i=1}^{m} \alpha_i y_i \vec{x_i}}
+\end{equation}}
+
+\uncover<3->{
+\begin{equation}
+\label{eq:l3}
+\frac{\partial L}{\partial \vec{b}} = - \sum_{i=1}^{m} \alpha_i y_i = 0 \Rightarrow \boxed{\sum_{i=1}^{m} \alpha_i y_i = 0}
+\end{equation}}
+\end{frame}
+
+
+
+\begin{frame}{Linear Maximum Margin Classifier: Lagrangian Multipliers}
+now we plug eq. \ref{eq:l1} into eq. \ref{eq:l2} and get:
+\begin{equation}
+W(\vec{\alpha}) = \sum_{i=1}^m \alpha_i - \frac{1}{2}\sum_{i,j}^m \alpha_i \alpha_j y_i y_j \vec{x_i} \cdot \vec{x_j}
+\end{equation}
+\begin{itemize}
+\uncover<2->{\item W is only dependent on $\alpha$}
+\uncover<3->{
+\item Now maximize W to get $\vec{\alpha}$ with subject to eq. \ref{eq:l3}(we call this procedure \textit{finding the saddle point (minimax point)})\uncover<3->{\footnote{note that W is a quadratic function $\Rightarrow$ convex problem}}}
+
+\uncover<4->{\item After optimization we will observe that most $\alpha_i = 0$}
+\uncover<5->{\item Those $\vec{x_i}$ with $\alpha_i > 0$ we call \textbf{support vectors} which all lie perpendicular to the margin line}
+% this solution cannot have samples within the boundaries but mathematically those within the margin borders also have alphas > 0 (soft margin)
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Linear Maximum Margin Classifier: Support Vectors}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{svm10}
+\end{center}
+\end{frame}
+
+
+\begin{frame}{Linear Maximum Margin Classifier: Lagrangian Multipliers}
+Recall the the \textbf{decision rule} $\vec{w}\cdot\vec{u}+b \geq 0$ for positive samples, insert $\vec{w} = \sum_{i=1}^{m} \alpha_i y_i \vec{x_i}$ (eq. \ref{eq:l2}) and we get:
+
+$$\sum_{i=1}^{m}\alpha_i y_i \vec{x_i} \cdot \vec{u} + b \geq 0 $$ for a positive (unknown) sample $\vec{u}$.
+The decision rule now also \textbf{only depends on $\alpha_i$ and on the the dot product between $\vec{x_i}$ and $\vec{u}$}\\
+\uncover<2->{
+This lets us specify a classification rule:
+$$f(\vec{u}) = sgn(\vec{w} \cdot \vec{u} + b) = \boxed{sgn\Bigg(\sum_{i=1}^m \alpha_i y_i \vec{x_i} \cdot \vec{u} + b\Bigg)}$$}
+\end{frame}
+
+
+\subsection{Non-linear separable data}
+\begin{frame}{Non-linear separable data}
+What if the data is not linearly separable (as in most practical cases)?
+\begin{center}
+\includegraphics[width=0.5\textwidth]{svm11}
+\end{center}
+\uncover<2->{
+$\Rightarrow$ linear SVM won't converge. Two common solutions:
+\begin{itemize}
+\item adjust SVM specification to use a soft margin
+\item apply kernel methods
+\item (or both)
+\end{itemize}}
+\end{frame}
+
+\subsection{Non-linear Maximum Margin Classifier: Soft Margin}
+\begin{frame}{Soft Margin}
+Solution: instead of specifying a hard margin, specify a soft margin with a slack variable $\xi \geq 0 \Rightarrow$ demand that not all samples must be correctly classified:
+
+\begin{itemize}
+\uncover<2->{\item slightly change constraint from\\ $y_i(\vec{x_i} \cdot \vec{w} + b) \geq 1$\\ to\\ $y_i(\vec{x_i} \cdot \vec{w} + b) \geq 1 - \xi_i$}
+\uncover<3->{\item now the optimal hyperplane is given by: $\boxed{\min \frac{1}{2} \lVert \vec{w} \rVert^2 + C \sum_{i=1}^m \xi_i}$}
+\uncover<4->{\item re-apply maximization of $W(\vec{\alpha})$ w.r.t. $0 \leq \alpha_i \leq C$, $\xi_i \geq 0$}
+\uncover<5->{\item $C$ is a regularization parameter (usually $C \in [0,1]$)}
+\uncover<6->{\item if C large $\Rightarrow$ enforce only few misclassified samples}
+\uncover<7->{\item if C small $\Rightarrow$ more misclassified samples allowed}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Soft Margin Example}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{svm12}
+\end{center}
+\end{frame}
+
+\subsection{Non-linear Maximum Margin Classifier: Kernel Method}
+\begin{frame}{Example}
+\uncover<1->{
+Often data samples are
+\begin{itemize}
+\item not linearly separable in the original space
+\item but linearly separable in a higher-dimensional space
+\end{itemize}}
+\uncover<2->{use the \textit{kernel trick} for projecting into such higher-dimensional space, for example:
+\begin{center}
+\includegraphics[width=1\textwidth]{svm13}
+\end{center}}
+\end{frame}
+
+\begin{frame}{Kernel Trick}
+\uncover<1->{\begin{block}{Kernel Trick}
+The approach of transforming data into an \textbf{implicitly} higher-dimensional space without computing coordinates of the data in that space, but rather by computing pairwise inner products of the samples. Typically $K(\vec{x}_i, \vec{x}_j) = \phi(\vec{x}_i) \cdot \phi({\vec{x}_j})$ [Wikipedia]
+\end{block}}
+\uncover<2->{Mapping $\phi: {\rm I\!R}^n -> {\rm I\!R}^m,$ usually $n>m$\\}
+\uncover<3->{Some clarification:
+\begin{itemize}
+\item the kernel trick \textbf{does not} produce a \textbf{mapping} from low to high-dimensional space
+\item it does provide a solution to compute inner products of samples in high-dim. space \textbf{without knowing the mapping}}
+\uncover<4->{\item Advantages: low-cost computation, operating in infinite spaces (e.g. Gaussian kernel) possible}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Kernel Trick Example}
+
+Example for $K(\vec{x}, \vec{z}) = (\vec{x} \cdot \vec{z})^2$\\
+\textbf{without using the kernel trick (explicit mapping):}
+\begin{equation*}
+  \begin{aligned}
+    x &= \begin{bmatrix}
+           x_{1} \\
+           x_{2} \\
+           x_{3}
+         \end{bmatrix}_{\rm I\!R^3}
+  \end{aligned}
+  \qquad
+    \begin{aligned}
+    \phi(x) &= \begin{bmatrix}
+           x_{1}x_{1} \\
+           x_{1}x_2 \\
+           x_{1}x_3 \\
+           \vdots \\
+           x_3 x_3
+         \end{bmatrix}_{\rm I\!R^9}
+  \end{aligned}
+\end{equation*}
+$\Rightarrow$ 18 multiplications (project $x$ and $z:{\rm I\!R^3} \rightarrow {\rm I\!R^9}$) + 9 multiplications + 8 additions (inner product) = 35 operations
+\end{frame}
+
+
+
+\begin{frame}{Kernel Trick Example}
+Example for $K(\vec{x}, \vec{z}) = (\vec{x} \cdot \vec{z})^2$\\
+\textbf{using the kernel trick:}
+\begin{equation*}
+\Bigg(
+  \begin{aligned}
+    \begin{bmatrix}
+           x_{1} \\
+           x_{2} \\
+           x_{3}
+         \end{bmatrix}
+  \end{aligned}
+  \cdot
+    \begin{aligned}
+    \begin{bmatrix}
+           z_{1} \\
+           z_{1} \\
+           z_{1}
+         \end{bmatrix}
+  \end{aligned}\Bigg)^2
+  \begin{aligned}
+		= (x_1z_1+x_2z_2+x_3z_3)^2
+	\end{aligned}
+  \end{equation*}
+$\Rightarrow$ 3 multiplications + 2 additions + 1 multiplication ($(\cdot)^2$)\\ = 6 operations
+\end{frame}
+
+\begin{frame}{Kernel Trick in the SVM}
+Where the kernel trick is used in the SVM:
+\begin{equation*}
+W(\vec{\alpha}) = \sum_{i=1}^m \alpha_i - \frac{1}{2}\sum_{i,j}^m \alpha_i \alpha_j y_i y_j \boxed{\vec{x_i} \cdot \vec{x_j}}
+\end{equation*}
+
+\uncover<2->{Note: not all functions $\phi:{\rm I\!R^n} \rightarrow {\rm I\!R^m}, n,m \in {\rm I\!R}$ are valid kernel functions\uncover<2->{\footnote{must fulfill the Mercer theorem}.\\}}
+\uncover<3->{Popular kernel functions are:
+\begin{itemize}
+\item inner product: $K(\vec{x}, \vec{z}) = \vec{x} \cdot \vec{z}$
+\item degree-d polynomial: $K(\vec{x}, \vec{z}) = (\vec{x} \cdot \vec{z} + c)^d, c\geq 0$}
+\uncover<4->{\item Gaussian radial basis function\uncover<4->{\footnote{also called Gaussian kernel}}: $K(\vec{x}, \vec{z}) = \exp (-\frac{\lVert \vec{x} - \vec{z} \rVert^2}{2\sigma^2})$}
+\end{itemize}
+\end{frame}
+	
+\subsection{Structural Risk Minimization}
+
+\begin{frame}{Duality of feature and hypothesis space}
+Points in the feature space correspond to hyperplanes in the hypothesis space and vice versa ("Statistical Learning Theory", Vapnik, 1998).
+\begin{center}
+\includegraphics[width=0.7\textwidth]{svm14}
+\end{center}
+\uncover<2->{
+Implications:
+\begin{itemize}
+\item the more data points, the more the hypothesis space will be constrained
+\item maximum margin search means searching for hyper planes with largest distance to data points $\Rightarrow$ center point of hyper sphere
+\end{itemize}}
+\end{frame}
+
+\begin{frame}{Structural Risk Minimization}
+\begin{center}
+\includegraphics[width=0.65\textwidth]{svm15}
+\end{center}
+\begin{itemize}
+\uncover<1->{\item during the saddle point search in the SVM (Lagrange optimization) more and more data samples are considered}
+\uncover<2->{\item this successively constrains the hypothesis search space}
+\uncover<3->{\item then, the best hyper plane with the smallest empirical error is chosen (center point of hyper sphere)}
+\uncover<4->{\item recall from concept learning lecture: this is \textbf{Structural Risk Minimization} e.g. $... H_3 \subset H_2 \subset H_1$}
+\end{itemize}
+\end{frame}
+
+\subsection{Evaluation}
+\begin{frame}
+Advantages
+\begin{itemize}
+\item SVM optimization problem is convex (no local minima)
+\item can handle high-dimensional data well
+\item fast test time execution (few $\alpha_i > 0$, linear: $\vec{w}$ can be pre-computed, non-linear: no pre-computation of $\vec{w}$ guaranteed [e.g. Gaussian kernel] but still fast due to inner products)
+\end{itemize}
+\uncover<2->{Disadvantages
+\begin{itemize}
+\item data samples have to be stored (space complexity not negligible)
+\item number of support vectors depend on problem
+\item no pre-processing of the data in the SVM approach included
+\item finding optimal kernel can be tedious}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Reading Assignment}
+Use the Internet to gain knowledge about the following topics:
+\begin{itemize}
+\item multi-class SVM (one-vs-all and one-vs-one)
+\item where the kernel trick is further applied (in addition to the SVM)
+\end{itemize}
+\end{frame}
+
+\newpage
+\bibliographystyle{apalike}
+\bibliography{lecture/bibliography.bib}
+
+\end{document}
