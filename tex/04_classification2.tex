@@ -70,7 +70,7 @@
 \begin{center}
 \includegraphics[width=0.3\textwidth]{classification_book}
 \end{center}
-or Stanford's CS231n course on CNNs is available online and gives a good introduction to classification
+or Stanford's CS231n course on CNNs is available online and gives a good introduction to classification and learning in computer vision
 \end{frame}
 
 \begin{frame}{Example}
@@ -91,8 +91,8 @@ or Stanford's CS231n course on CNNs is available online and gives a good introdu
 \begin{frame}{Parametric vs. Non-Parametric}
 many definitions, among one is:
 \begin{itemize}
-\item \textbf{parametric}: model summarizes data by finite set of parameters, e.g. $y_i=\phi_0 + \phi_1x_i + e_i$ 
-\item \textbf{non-parametric}: model (user) doesn't make explicit assumptions about the data distribution, e.g. $y_i = f(x_i) + e_i$
+\item \textbf{parametric}: model summarizes data by finite set of parameters, e.g. $$y_i=\boxed{\phi_0 + \phi_1x_i} + e_i$$
+\item \textbf{non-parametric}: model (user) doesn't make explicit assumptions about the data distribution, e.g. $$y_i = \boxed{f(x_i)} + e_i$$
 \item note: non-parametric methods still require parameters (however, their form isn't defined by the user)
 \end{itemize}
 \textbf{Task:} Classify the following ML approaches (parametric/non-parametric):
@@ -106,7 +106,7 @@ many definitions, among one is:
 
 \subsection{Logistic Regression}
 
-\begin{frame}{Boston House Price dataset}
+\begin{frame}{Example:Boston House Price dataset}
 [The Boston house-price data of Harrison, D. and Rubinfeld, D.L. 'Hedonic
 prices and the demand for clean air']
 \begin{center}
@@ -130,11 +130,18 @@ Price distribution\\
 \end{center}
 \end{frame}
 
-\begin{frame}{Boston House Price dataset}
-(binary) classification: estimated probability (price > 40) using linear regression (left) and logistic regression (right)\\
+\begin{frame}{Logistic Regression vs. Linear Regression}
+Common demand in practice:
+\begin{itemize}
+\item there's some data existing
+\item learn the concept behind it, classify new samples
+\end{itemize}
+\uncover<2->{
+Considering the previous Boston housing dataset: estimate probability that the price > 40. (left: linear regression, right: logistic regression\\}
+\uncover<3->{
 \begin{center}
-\includegraphics[width=1\textwidth]{log_linear_comparison}\\
-\end{center}
+\includegraphics[width=0.9\textwidth]{log_linear_comparison}\\
+\end{center}}
 \end{frame}
 
 
@@ -158,7 +165,7 @@ $\sigma(z) = \frac{e^z}{1+e^z} = \frac{1}{1+e^{-z}}$
 
 \begin{column}{0.7\textwidth}
 \begin{itemize}
-\item our example was a binary problem, we had:\\ 
+\item in our example we had:\\ 
 $z=\beta_0+ \beta_1x$
 \item if we have $m$ explanatory variables (multiple regression) we have:\\ 
 $z=\beta_0 + \sum_{i=1}^{m} \beta_i x_i$
@@ -166,10 +173,11 @@ $z=\beta_0 + \sum_{i=1}^{m} \beta_i x_i$
 $$
 y=
 \begin{cases}
-1 & \beta_0 + \sum_{i=1}^{m} \beta_i x_i > 0\\
+1 & \beta_0 + \sum_{i=1}^{m} \beta_i x_i > thresh\\
 0 & else
 \end{cases}
 $$
+\emph{tresh} $\in [0,1)$ is some arbitrary threshold
 
 
 \end{itemize}
@@ -185,7 +193,7 @@ $$
 \begin{itemize}
 \item how many coefficients in multiple regression are required? 
 \item assess the model fit
-\item do likelihood ratio-test or Wald statistic after fitting the coefficients
+\item do likelihood ratio-test or Wald test after fitting the coefficients
 \item don't confuse multiple regression with multinomial regression
   \begin{itemize}
   \item multiple l. regression: multiple coefficients (independent variables)
@@ -252,7 +260,7 @@ Given the data $\{(x_1, y_1), ..., (x_m, y_m)\}$ with $x_i,y_i \in \mathbb{R}^{n
 \uncover<1->{\item intuition:
   \begin{itemize}
   \item minimizing a negative quantity = maximizing a positive quantity
-  \item if y=1: $L(\hat{y},y)=-\log \hat{y} \rightarrow$ we want large $\hat{y}$
+  \item if y=1: $L(\hat{y},y)=-1 \log \hat{y} \rightarrow$ we want large $\hat{y}$
   \item if y=0: $L(\hat{y},y)=-\log(1-\hat{y}) \rightarrow$ we want small $\hat{y}$
   \end{itemize}}
 
@@ -260,7 +268,7 @@ Given the data $\{(x_1, y_1), ..., (x_m, y_m)\}$ with $x_i,y_i \in \mathbb{R}^{n
 \end{frame}
 
 
-\begin{frame}{Maximum Likelihood Estimation}
+\begin{frame}{Maximum Likelihood Estimation(2)}
 Given the data $\{(x_1, y_1), ..., (x_m, y_m)\}$ with $x_i,y_i \in \mathbb{R}^{n_x+1}$ and $x_0 = 1$ we want to find parameters $\theta=[\beta_0, \beta_1,...,\beta_{n_x}]^T$ that maximize the (conditional) likelihood of class labels $Y$ given the training data $X$.
 
 \begin{itemize}
@@ -293,7 +301,7 @@ $\rightarrow$ yields the maximum likelihood estimates $\theta$
 
 \uncover<2->{
 \begin{itemize}
-\item we use gradient descent (or any other iterative numerical optimization algorithm)
+\item log-likelihood and gradient descent (or any other iterative numerical optimization algorithm)
 $\rightarrow$ yields optimal coefficients
 \end{itemize}}
 \end{frame}
@@ -361,7 +369,7 @@ $$x_{n+1} = x_n - \alpha \nabla F(x_n)$$}
 
 \begin{itemize}
 \uncover<1->{\item What can be an issue when gradient descent is used with non-convex functions?}
-\uncover<2->{\item What can behavior can be caused by a small/large learning rate? Remember: $$x_{n+1} = x_n - \alpha \nabla F(x_n)$$}
+\uncover<2->{\item What behavior can be caused by a small/large learning rate? Remember: $$x_{n+1} = x_n - \alpha \nabla F(x_n)$$}
 \end{itemize}
 \end{frame}
 
@@ -371,10 +379,8 @@ Keep in mind that we usually operate on highly dimensional problems. 2d paramete
 \includegraphics[width=0.5\textwidth]{gd_surface}
 \end{center} \cite{WikiOverfitting}
 Deep neural networks can have millions of parameters
-
 \end{frame}
 
-\subsection{Logistic Regression in Practice}
 \begin{frame}{Logistic Regression in Practice}
 \begin{itemize}
 \item LR for handwritten digits recognition
@@ -385,7 +391,7 @@ Deep neural networks can have millions of parameters
 \end{frame}
 
 
-\subsection{Neural Networks}
+\subsection{Neural Networks and Deep Learning}
 \begin{frame}{(Artificial) Neural Networks}
 \begin{itemize}
 \uncover<1->{\item collection of \textbf{interconnected nodes} (artificial neurons)}
@@ -400,36 +406,48 @@ Deep neural networks can have millions of parameters
 \end{frame}
 
 \begin{frame}{(Artificial) Neural Networks Example}
-A single-layer neural network (sometimes: single-layer perceptron):
+Single-layer neural network: input and output layer\\
+Multi-layer neural network\footnote{sometimes called multi-layer perceptron}  (below): input, hidden, output layer
 \begin{center}
 \includegraphics[width=0.3\textwidth]{basic_ff_nn}
 \end{center}
-NN's can also be seen as feature extractors since the weights allow/restrict certain input areas (input nodes) to "flow" better or worse towards the output
+\begin{itemize}
+\item nodes of two adjacent layers are \emph{fully-connected}
+\item can be seen as feature extractor (weights allow/restrict certain inputs)
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Neural Network Model Classes}
 \begin{itemize}
 \item artificial neural networks (ANN or just NN) form a large class of models, to name just a few:
-  \begin{itemize}
+\uncover<2->{
+\begin{itemize}
 \item feed-forward NN
     \begin{itemize}
 	\item Perceptron / "Vanilla"
     \item Convolutional
     \item Autoencoder
     \end{itemize}
+}
+\uncover<3->{
 \item recurrent NN
   \begin{itemize}
   \item Long short-term memory
   \item Bi-directional
   \end{itemize}
+}
+\uncover<4->{
 \item undirected NN
   \begin{itemize}
   \item Deep Belief
   \item Restricted Boltzmann
   \end{itemize}
+}
+\uncover<5->{
 \item "third generation": Spiking NN
   \end{itemize}
 \item in this lecture we will focus on feed-forward NN for classification
+}
 \end{itemize}  
 \end{frame}
 
@@ -446,7 +464,8 @@ NN's can also be seen as feature extractors since the weights allow/restrict cer
 
 \begin{frame}{Perceptron (Rosenblatt, 1957)}
 \centering
-\includegraphics[width=1\textwidth]{perceptron1}\\from \cite{mitchell1997a}
+\includegraphics[width=1\textwidth]{perceptron1}\\from \cite{mitchell1997a}\\
+adjustment of weights is equivalent to searching for the best decision boundary
 \end{frame}
 
 \begin{frame}{Perceptron (Rosenblatt, 1957)}
@@ -476,16 +495,28 @@ algorithm:
 \end{itemize}
 \end{frame}
 
+
 \begin{frame}{Perceptron Example: Geometric Interpretation in $\mathbb{R}^2$}
-be $N' = \{x' | x' = -x, \forall x \in N\}$, now: $x \cdot w > 0, \forall x \in N' \cup P$
-\centering
-\includegraphics[width=0.75\textwidth]{perceptron2}
+\begin{itemize}
+\item in the following example, all shown samples $x_i$ from $P$
+\item note the dot product: $w_t \cdot x_j$, i.e. $w^0_t x^0_j + ... + w^i_t x^i_j$
+(for j-th sample at time-step t and $0 < i < n$ for n-dimensional vectors)
+\item sometimes extension used: construct a supporting set $N' = \{x' | x' = -x, \forall x \in N\}$\\
+\item now all samples are correctly classified iff $x \cdot w > 0, \forall x \in N' \cup P$
+\end{itemize}
 \end{frame}
+
+\begin{frame}{Perceptron Example: Geometric Interpretation in $\mathbb{R}^2$}
+\centering
+\includegraphics[width=0.8\textwidth]{perceptron2}
+\end{frame}
+
+
 
 
 \begin{frame}{Perceptron Review}
 \begin{itemize}
-\uncover<1->{\item slow adjustment if $|w| >> |x| \Rightarrow$ normalize vectors}
+\uncover<1->{\item slow adjustment if $|w| >> |x| \Rightarrow$ solution: normalize vectors}
 \uncover<2->{\item collinear $x$ vectors will result in oscillation $\Rightarrow$ slow convergence}
 \uncover<3->{\item if samples are not linearly separable there's no convergence $\Rightarrow$ use delta-rule to overcome this issue}
 \uncover<4->{\item the delta-rule is an update-rule that uses gradient descent to search the hypothesis space and to find the weights that best fit the samples (not discussed here)}
@@ -496,8 +527,8 @@ be $N' = \{x' | x' = -x, \forall x \in N\}$, now: $x \cdot w > 0, \forall x \in 
 \end{frame}
 
 
-\begin{frame}{Relation to Logistic Regression}
-\uncover<1->{\textbf{artificial neuron:} (arbitrary activation function)\\\includegraphics[width=0.75\textwidth]{artificial_neuron}}\\
+\begin{frame}{Relation between Logistic Regression and NN}
+\uncover<1->{\textbf{artificial neuron:} (arbitrary activation function)\\\includegraphics[width=0.62\textwidth]{artificial_neuron}}\\
 \uncover<2->{\textbf{logistic regression:} (logistic function as activation)
 \includegraphics[width=0.75\textwidth]{logistic_regression_unit}}
 \end{frame}
@@ -513,7 +544,7 @@ be $N' = \{x' | x' = -x, \forall x \in N\}$, now: $x \cdot w > 0, \forall x \in 
 \begin{itemize}
 \uncover<3->{\item functions we want to model are typically non-linear}
 \uncover<4->{\item increase the capacity of NNs and thus, the complexity of their functions}
-\uncover<5->{\item a multi-layer NN with just linear AF behaves like a single-layer NN\footnote<5->{Universal approximation theorem} $\Rightarrow$ make actual use of network depth}
+\uncover<5->{\item a multi-layer NN with just linear AFs behaves like a single-layer NN with linear AFs\footnote<5->{the composition of two linear functions is itself a linear function} $\Rightarrow$ make actual use of network depth}
 \end{itemize}
 \end{frame}
 
@@ -538,7 +569,7 @@ important: since we use backpropagation to train NNs, we require AFs to be diffe
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Multi-layer Neural Networks}
+\begin{frame}{Multi-layer Neural Networks and Deep Learning}
 \begin{itemize}
 \uncover<1->{\item a NN with at least three (input, hidden, output) is considered to be a multi-layer NN}
 \uncover<2->{\item \textbf{what's the difference between neural networks and deep neural networks?}}
@@ -609,7 +640,7 @@ Softmax function example:
 \begin{equation}
 	L_i = -\log (\frac{e^{f_{y_i}}}{\sum_j^K e^{f_j}})
 \end{equation}\\
-where $y_i$ chooses the index of the correct label at step $i$ and $f_j$ being the $j$-th element of the class scores vector $f$}
+where $y_i$ chooses the index of the correct label at step $i$ and $f_j$ is the $j$-th element of the class scores vector $f$}
 \uncover<3->{\item intuitively, $L_i$ yields the normalized probability of class $y$ for a given input $x_i$ and parameters $W$}
 \uncover<4->{\item the cost for the data is the mean of $L_i$ over all training samples}
 \end{itemize}
@@ -621,7 +652,7 @@ where $y_i$ chooses the index of the correct label at step $i$ and $f_j$ being t
 \uncover<2->{\begin{equation}
 	H(p,q) = - \sum_k p(x) \log q(x)
 \end{equation}}
-\uncover<3->{\item set $L_i = \log q(x)$ and
+\uncover<3->{\item set $L_i = \log q(x)$
 \item $p=[0,...,1,...0]^T$ with a single 1 at $y_i$-th position}
 \uncover<4->{\item $\Rightarrow$ the softmax classifier minimizes the cross-entropy between the log probability of the predicted class $y_i$ and the true distribution $p$}
 \uncover<4->{\item $\Rightarrow$ during training, the predicted distribution will be enforced to have all of its mass on the correct class}
@@ -688,7 +719,7 @@ source: Yann LeCun et al., „Gradient-Based Learning Applied to Document Recogn
 
 \begin{frame}{Connection between Backprop and Learning Theory class}
 \textbf{Q}: What is the solver actually doing when executing the backpropagation algorithm?\\
-\uncover<2->{\textbf{A}:it searches the hypothesis space (remember hypothesis space theory class)\\}
+\uncover<2->{\textbf{A}:it executes a search within the hypothesis space for a suitable hypothesis (remember hypothesis space theory class)\\}
 \uncover<3->{\textbf{Q}: What are the hypotheses?\\}
 \uncover<4->{\textbf{A:} the individual weight vector per iteration (relative to the training examples)\footnote<4->{this also holds for weight vectors in Logistic Regression computed by Gradient Descent methods}. More precisely: the hypothesis space contains \textbf{continuously} parameterized hypotheses (for example the weights in the neurons)}\\
 \uncover<5->{The \textbf{inductive bias} by which backprop generalizes beyond seen data is a bit more tricky: it's the smooth interpolation between data points (i.e. labels between two positive samples will also be positive}
@@ -698,11 +729,11 @@ source: Yann LeCun et al., „Gradient-Based Learning Applied to Document Recogn
 
 \begin{frame}{Backpropagation Algorithm: the Backward Pass}
 \begin{itemize}
-\item first, the direction of the steepest descent in the $n$-dimensional space is computed:
+\item To update the weights, Backpropagation computes the direction of the steepest descent in the $n$-dimensional space:
 \begin{equation}
-	\nabla L_i(W) = \frac{\partial L}{\partial w_0}, \frac{\partial L}{\partial w_1}, ..., \frac{\partial L}{\partial w_n}
+	\nabla L(W) = \frac{\partial L}{\partial w_0}, \frac{\partial L}{\partial w_1}, ..., \frac{\partial L}{\partial w_n}
 \end{equation}
-\item second, we update the weights between the output layer and the last hidden layer with\footnote{called vanilla update}:
+\item We use the following (or a more sophisticated) rule to update the weights of every single neuron\footnote{called vanilla update}:
 \begin{equation}
 w_{t+1} = w_t + v_{t+1}
 \end{equation} 
@@ -715,11 +746,12 @@ with $w_t$ being the parameter vector at time step $t$ and $\alpha$ the learning
 
 \begin{frame}{Backpropagation Algorithm: the Backward Pass}
 \begin{itemize}
-\item the gradients of $L_i$ w.r.t to the weights $w_{j,i}$ (weight between neuron i to j) previous to the last hidden layers are unknown at first
-\item solution: we use the chain rule to compute the gradients between the last and penultimate layer, the penultimate and the layer previous to that etc. 
+\uncover<1->{\item computing the gradients between the output and the last hidden layer is straightforward (derive loss fct. w.r.t. to the individual weight)}
+\uncover<2->{\item the gradients of $L$ w.r.t to the weights $w_{j,i}$ (weight between neuron i to j) previous to the last hidden layers are \textbf{unknown} at first}
+\uncover<3->{\item solution: we use the \textbf{chain rule} to compute the gradients between the last and penultimate layer, the penultimate and the layer previous to that etc.
 \begin{equation}
 	 \frac{\partial L}{\partial w_{j,i}} = \frac{\partial L}{\partial z_j} \times \frac{\partial z_j}{\partial w_{j,i}}
-\end{equation}
+\end{equation}}
 
 with $z_j$ being the output of neuron $j$ 
 \end{itemize}
@@ -742,7 +774,7 @@ lecture recommendation for backprop and chain rule (Stanford's CS231n course)\fo
 v_{t+1} = - \alpha \frac{\partial L}{\partial w_t} + \mu v_t
 \end{equation} $\mu \in [0,1]$
 
-\item initialization of weights matter (especially in DNN)\\
+\item initialization of weights matter (see next slide)\\
 $\Rightarrow$ \textbf{vanishing gradient} and \textbf{exploding gradient problem}
 \item use initialization methods, e.g. \emph{Xavier} initialization
 \item \textbf{saturating activation functions} can cause problems as well
@@ -806,10 +838,10 @@ Optimal stopping problem: don't stop too early but also not too late
 \end{center}
 \end{frame}
 
-
+\subsection{NNs for Perception: Convolutional Neural Networks}
 \begin{frame}{Convolutional Neural Networks}
 \begin{itemize}
-\uncover<1->{\item CNN's are a variation of multi-layer NN}
+\uncover<1->{\item CNN's are a variant of multi-layer NN}
 \uncover<2->{\item their design is inspired by biological processes\\$\Rightarrow$ neurons in the animal visual cortex respond to stimuli only in a restricted area}
 \uncover<3->{\item main difference to NN: neurons are not fully connected to underlying and overlying neighbor neurons\\$\Rightarrow$ "receptive field"\\
 \begin{center}
@@ -839,7 +871,7 @@ typically use three types of layers
 \begin{itemize}
 \uncover<1->{\item receptive field is slided over the input}
 \uncover<2->{\item the parameters learned in a conv layer are the elements of the filter matrices}
-\uncover<3->{\item depth of the "block" is defined be the number of filters}
+\uncover<3->{\item depth of the "block" is defined by the number of filters}
 \uncover<4->{\item detects e.g. edges, circles, cat ears etc.}
 \end{itemize}
 \end{frame}
@@ -867,11 +899,11 @@ source: Honglak Lee, “Tutorial on deep learning and applications”
 
 \begin{frame}{Some Advices for Practical Applications}
 \begin{itemize}
-\uncover<1->{\item invest in data-preprocessing, normalize data}
+\uncover<1->{\item invest in data-preprocessing, data normalization}
 \uncover<2->{\item use a healthy dataset split, e.g. 70/20/10 (train/valid/test)}
 \uncover<3->{\item a good optimizer (solver) is "Adam" (per-parameter LR \& moving averages of the gradient)}
 \uncover<4->{\item use ReLU, PReLU etc.}
-\uncover<5->{\item no activation functions in the output layer}
+\uncover<5->{\item careful with bounded activation functions (e.g. sigmoid in regression) in the output layer}
 \uncover<6->{\item 64 or 128 filters for conv layers is plenty}
 \uncover<7->{\item currently popular frameworks: PyTorch, TensorFlow}
 \uncover<8->{\item training on GPUs is generally faster than training on CPUs}
@@ -885,7 +917,7 @@ better. When should you not use it?
 \begin{itemize}
 \item if you don't have enough data
 \item if it's a low budged project (DL requires many resources such as GPUs,  time for training and paper research etc.)
-\item when causal mechanisms need to be understood
+\item when traceability is important or when causal mechanisms need to be understood (although research is slowly getting there)
 \end{itemize}
 \end{frame}
 
@@ -899,21 +931,19 @@ IMO: best way of learning is to experiment around. Therefore, I suggest to try t
 \item training of an image classifier with a CNN
 \item Python novice skills are sufficient
 \item no GPU required (before downloading, choose "CUDA: None")
-\item requires PyTorch (mac OS, Linux), consider hypervisors like VirtualBox if you have Windows et al.
+\item requires PyTorch (mac OS, Linux, Windows)
 \item uses CIFAR10 dataset; 60 000 32x32 color images of 10 classes
-\item we can discuss issues either on Moodle or during the next lectures
+\item we can discuss issues either on Moodle or during the upcoming lectures
 \end{itemize}
 \end{frame}
 
-\subsection{Neural Networks in Practice}
+\subsection{CNN Applications}
 \begin{frame}{Neural Networks in Practice}
 \begin{itemize}
 \item CNNs for face recognition [Taigman et al., 2014, "DeepFace"]
 \includegraphics[width=0.7\textwidth]{cnn_app1}
 \item CNNs for human pose estimation [Toshev et al., 2014]\\
 \includegraphics[width=0.7\textwidth]{cnn_app2}
-\item CNNs for labeling aerial images [Mnih et al., 2010]\\
-\includegraphics[width=0.4\textwidth]{cnn_app3}
 \end{itemize}
 \end{frame}
 
@@ -927,14 +957,7 @@ IMO: best way of learning is to experiment around. Therefore, I suggest to try t
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Neural Networks in Practice}
-\begin{itemize}
-\item CNNs for style transfer [Gatys et al., 2015, "DeepArt"]
-\includegraphics[width=0.4\textwidth]{cnn_app4}
-\item CNNs used in GANs [Karras et al., 2018]\\
-\includegraphics[width=0.5\textwidth]{cnn_app5}
-\end{itemize}
-\end{frame}
+
 
 
 \newpage

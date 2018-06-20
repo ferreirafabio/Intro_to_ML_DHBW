@@ -73,8 +73,6 @@
 \end{itemize}
 \end{frame}
 
-
-\subsection{Introduction}
 \begin{frame}{Introduction}
 How to separate this space?
 \begin{center}
@@ -105,7 +103,7 @@ There exist many hyperplanes that would correctly classify the data. Which one i
 
 
 \begin{frame}{Introduction}
-Let's choose a hyperplane so that it represents the largest separation (margin) between both classes. \\Thiy yields the task: maximize the distance from the \textit{middle line} to the nearest data point on each side.
+Let's choose a hyperplane so that it represents the largest separation (margin) between both classes. \\This yields the task: maximize the distance from the \textit{middle line} to the nearest data point on each side.
 \begin{center}
 \includegraphics[width=0.7\textwidth]{svm5}
 \end{center}
@@ -113,7 +111,7 @@ Let's choose a hyperplane so that it represents the largest separation (margin) 
 
 \subsection{Linear Maximum Margin Classifier}
 \begin{frame}{Linear Maximum Margin Classifier: Decision Rule}
-Considering a vector pointing to an unknown sample $\vec{u}$ and a vector of arbitrary length constrained to be perpendicular to the middle line. \textbf{Task:} Determine if $\vec{u}$ is on the right or left side of the hyperplane
+Considering a vector pointing to an unknown sample $\vec{u}$ and a vector $\vec{w}$ of arbitrary length constrained to be perpendicular to the middle line. \textbf{Task:} Determine if $\vec{u}$ is on the right or left side of the hyperplane
  \vspace{2em}
 
 \begin{columns}
@@ -146,7 +144,7 @@ Remember the decision rule: $\vec{w}\cdot\vec{u}+b \geq 0 \Rightarrow$ positive 
 
 The comfort we gain: only one inequality that holds for $x_i$ laying outside of the margin boundaries $$\boxed{y_i (\vec{x}_i \cdot \vec{w} + b) \geq 1}$$}
 \uncover<4->{
-and we add one additional constraint for $x_i$ placed on the margins: $$\boxed{y_i (\vec{x}_i \cdot \vec{w} + b) -1 = 0}$$
+and we add one additional constraint for $x_i$ placed on the margin boundaries: $$\boxed{y_i (\vec{x}_i \cdot \vec{w} + b) -1 = 0}$$
 }
 \end{frame}
 
@@ -159,7 +157,7 @@ Geometrically this gives us:
 \end{frame}
 
 \begin{frame}{Linear Maximum Margin Classifier: Margin Width}
-Recall: we want to maximize the distance between points of two different classes. This raises the question: how to express the distance between the two margins?
+Recall: we want to maximize the distance between points of two different classes. This raises the question: how to express the distance between the two margin boundaries?
 \begin{center}
 \includegraphics[width=0.7\textwidth]{svm8}
 \end{center}
@@ -167,7 +165,7 @@ Recall: we want to maximize the distance between points of two different classes
 
 \begin{frame}{Linear Maximum Margin Classifier: Margin Width}
 How to express the distance between the two margin boundaries?
-\textbf{One solution: compute the width with a unit (light blue) vector and project the purple vector on that unit vector}
+\textbf{One solution: compute the width with a unit vector (light blue) and project the purple vector on that unit vector}
 \begin{center}
 \includegraphics[width=0.6\textwidth]{svm9}
 \end{center}
@@ -182,7 +180,7 @@ $$width = (\vec{x}_{+} - \vec{x}_{-}) \cdot \frac{\vec{w}}{\lVert \vec{w} \rVert
 \uncover<2->{$$width = \frac{(1-b + 1 +b)}{\lVert \vec{w} \rVert} = \frac{2}{\lVert \vec{w} \rVert}$$}
 
 \uncover<3->{our goal now is:
-$$\max \frac{1}{\lVert \vec{w} \rVert} = \min \lVert \vec{w} \rVert \leadsto \min \frac{1}{2} \lVert \vec{w} \rVert^2$$}
+$$\max \frac{2}{\lVert \vec{w} \rVert} = \max \frac{1}{\lVert \vec{w} \rVert} = \min \lVert \vec{w} \rVert \leadsto \min \frac{1}{2} \lVert \vec{w} \rVert^2$$}
 \uncover<4->{find extremum of a function with constraints\\$
 \rightarrow$ use Lagrangian optimization (method of Lagrange multipliers)\\
 $\rightarrow$ yields a new (closed) expression with the constraints included}
@@ -190,7 +188,7 @@ $\rightarrow$ yields a new (closed) expression with the constraints included}
 
 \begin{frame}{Linear Maximum Margin Classifier: Lagrangian Multipliers}
 \uncover<1->{
-Recall: we had defined a constraint for $x_i$ placed directly on the margin boundaries; $y_i (\vec{x}_i \cdot \vec{w} + b) -1 = 0 \rightarrow$ re-use it for the Lagrangian for  $m$ samples:
+Recall: we had defined a constraint for $x_i$ placed directly on the margin boundaries: $y_i (\vec{x}_i \cdot \vec{w} + b) -1 = 0 \rightarrow$ re-use it for the Lagrangian for  $m$ samples:
 
 \begin{equation}
 \label{eq:l1}
@@ -214,14 +212,14 @@ compute the minimum/first partial derivatives of L w.r.t. $\vec{w}$ and b:
 
 
 \begin{frame}{Linear Maximum Margin Classifier: Lagrangian Multipliers}
-now we plug eq. \ref{eq:l1} into eq. \ref{eq:l2} and get:
+now we plug eq. \ref{eq:l2} into eq. \ref{eq:l1}, simplify it and get:
 \begin{equation}
 W(\vec{\alpha}) = \sum_{i=1}^m \alpha_i - \frac{1}{2}\sum_{i,j}^m \alpha_i \alpha_j y_i y_j \vec{x_i} \cdot \vec{x_j}
 \end{equation}
 \begin{itemize}
-\uncover<2->{\item W is only dependent on $\alpha$}
+\uncover<2->{\item W is only dependent on $\alpha_i$}
 \uncover<3->{
-\item Now maximize W to get $\vec{\alpha}$ with subject to eq. \ref{eq:l3}(we call this procedure \textit{finding the saddle point (minimax point)})\uncover<3->{\footnote{note that W is a quadratic function $\Rightarrow$ convex problem}}}
+\item Now maximize W to get $\vec{\alpha}$ with subject to eq. \ref{eq:l3} (we call this procedure \textit{finding the saddle point (minimax point)})}\uncover<3->{\footnote{note that W is a quadratic function $\Rightarrow$ convex problem}}
 
 \uncover<4->{\item After optimization we will observe that most $\alpha_i = 0$}
 \uncover<5->{\item Those $\vec{x_i}$ with $\alpha_i > 0$ we call \textbf{support vectors} which all lie perpendicular to the margin line}
@@ -371,7 +369,7 @@ Where the kernel trick is used in the SVM:
 W(\vec{\alpha}) = \sum_{i=1}^m \alpha_i - \frac{1}{2}\sum_{i,j}^m \alpha_i \alpha_j y_i y_j \boxed{\vec{x_i} \cdot \vec{x_j}}
 \end{equation*}
 
-\uncover<2->{Note: not all functions $\phi:{\rm I\!R^n} \rightarrow {\rm I\!R^m}, n,m \in {\rm I\!R}$ are valid kernel functions\uncover<2->{\footnote{must fulfill the Mercer theorem}.\\}}
+\uncover<2->{Note: not all functions $\phi:{\rm I\!R^n} \rightarrow {\rm I\!R^m}, (n,m) \in {\rm I\!R}$ are valid kernel functions\uncover<2->{\footnote{must fulfill the Mercer theorem}.\\}}
 \uncover<3->{Popular kernel functions are:
 \begin{itemize}
 \item inner product: $K(\vec{x}, \vec{z}) = \vec{x} \cdot \vec{z}$
@@ -413,11 +411,11 @@ Advantages
 \begin{itemize}
 \item SVM optimization problem is convex (no local minima)
 \item can handle high-dimensional data well
-\item fast test time execution (few $\alpha_i > 0$, linear: $\vec{w}$ can be pre-computed, non-linear: no pre-computation of $\vec{w}$ guaranteed [e.g. Gaussian kernel] but still fast due to inner products)
+\item fast test time execution (usually few $\alpha_i > 0$ $\Rightarrow$ few inner products, if linear SVM: $\vec{w}$ can always be pre-computed [use eq. \ref{eq:l2}], if non-linear SVM: no pre-computation of $\vec{w}$ guaranteed [e.g. Gaussian kernel] but computing inner products between support vector train samples and a new sample is still relatively cheap)
 \end{itemize}
 \uncover<2->{Disadvantages
 \begin{itemize}
-\item data samples have to be stored (space complexity not negligible)
+\item data samples have to be stored (space complexity not negligible, however, SVM is still not a lazy-learner since it learns a decision boundary $\Rightarrow$ eager-learner) 
 \item number of support vectors depend on problem
 \item no pre-processing of the data in the SVM approach included
 \item finding optimal kernel can be tedious}
